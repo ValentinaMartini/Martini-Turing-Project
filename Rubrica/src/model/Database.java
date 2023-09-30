@@ -147,40 +147,33 @@ public class Database {
 	
 	public int modifyPersonaOnFile(Persona persona, String oldTelephone) {
 		try {
-			
+			File file;
 			if(!oldTelephone.equals(persona.getTelephone())) {
 				Boolean value = checkUniqueNumber(persona.getTelephone());
 				if(value == false) {
 					return -1;
 				}
 				
+				file = new File(dirPath+delimiter+oldTelephone+".txt");
+				File newFile = new File(dirPath+delimiter+persona.getTelephone()+".txt");
+				if(file.renameTo(newFile)) {
+					System.out.println("File rinominato correttamente" ); 
+				}else {
+					System.out.println("Errore rinominazione file" ); 
+				}
+				
+			}else {
+				file = new File(dirPath+delimiter+oldTelephone+".txt");
 			}
 			
-			BufferedReader file = new BufferedReader(new FileReader(filePathContatti));
-	        StringBuffer inputBuffer = new StringBuffer();
-	        String line;
-			Scanner scnr = new Scanner(file);
-		    //String telephone = persona.getTelephone();
-		    String str = persona.getName()+";"+persona.getSurname()+";"+persona.getAddress()+";"+persona.getTelephone()+";"+persona.getAge();
-		    String[] personaStr;
-		    while ((line = file.readLine()) != null) {
-		    	
-		    	personaStr = line.split(";");  
-	            
-		    	if(personaStr[3].equals(oldTelephone)) {
-		        	line = str; 
-		         }
-		    	inputBuffer.append(line);
-	            inputBuffer.append('\n');
-	            
-	            
-	        }
-		    file.close();
-		    FileOutputStream fileOut = new FileOutputStream(filePathContatti);
-	        fileOut.write(inputBuffer.toString().getBytes());
+			//String line;
+			StringBuffer inputBuffer = new StringBuffer();
+			String str = persona.getName()+";"+persona.getSurname()+";"+persona.getAddress()+";"+persona.getTelephone()+";"+persona.getAge();
+			
+			FileOutputStream fileOut = new FileOutputStream(dirPath+delimiter+persona.getTelephone()+".txt");
+	        fileOut.write(str.getBytes());
 	        fileOut.close();
-	          
-		    
+			
 		    modifyPersonaOnTable(persona, oldTelephone);
 		}catch (Exception e1) {
 			// TODO Auto-generated catch block
@@ -207,7 +200,7 @@ public class Database {
 			
 			if (file.delete())  {  
 				
-				System.out.println(file.getName() +  " cancellato" );   //recupera e stampa il nome del file  
+				System.out.println(file.getName() +  " cancellato" );   
 			}  
 			else{  
 				System.out.println( "fallito" );  

@@ -54,8 +54,8 @@ public class EditorPersona extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				String name = fieldName.getText();
-				String surname = fieldSurname.getText();
+				String name = capitalizeFirstLetter(fieldName.getText());
+				String surname = capitalizeFirstLetter(fieldSurname.getText());
 				String address = fieldAddress.getText();
 				String telephone = fieldTelephone.getText();
 				String ageStr = fieldAge.getText();
@@ -112,17 +112,16 @@ public class EditorPersona extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				String name = fieldName.getText();
-				String surname = fieldSurname.getText();
+				String name = capitalizeFirstLetter(fieldName.getText());
+				String surname = capitalizeFirstLetter(fieldSurname.getText());
 				String address = fieldAddress.getText();
 				String telephone = fieldTelephone.getText(); 
+				String ageStr = fieldAge.getText();
 				
 				if(!checkTelephone(telephone)) {
 					return;
 				}
-				
-				String ageStr = fieldAge.getText();
-				
+		
 				if( !checkEmptyField(name, surname, address, telephone, ageStr) ) {
 					return;
 				}
@@ -291,4 +290,7 @@ public class EditorPersona extends JFrame {
 		
 	}
 
+	private String capitalizeFirstLetter(String str) {
+		return  str.substring(0, 1).toUpperCase() + str.substring(1);
+	}
 }
