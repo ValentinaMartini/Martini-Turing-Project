@@ -39,7 +39,7 @@ public class FinestraPrincipale extends JFrame{
 		panel.add(buttonModify);
 		panel.add(buttonDelete);
 		
-		controller.createFileContatti();
+		controller.createDir();
 		
 		finestraPrincipale = this;
 		

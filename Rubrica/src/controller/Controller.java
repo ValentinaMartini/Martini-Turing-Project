@@ -12,10 +12,10 @@ public class Controller {
 	Database database = new Database();
 	//Database2 database = new Database2();
 	
-	public void createFileContatti() {
+	/*public void createFileContatti() {
 		database.createFileContatti();
 		
-	}
+	}*/
 	
 	public void createFileUser() {
 		database.createFileUser();

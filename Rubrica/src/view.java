@@ -9,8 +9,8 @@ import view.Login;
 
 public class view {
 	public static void main(String[] args) {
-		//new FinestraPrincipale();
-		new Login();
+		new FinestraPrincipale();
+		//new Login();
 		
 	}
 	

@@ -20,6 +20,7 @@ public class Database {
 	private ArrayList<Persona> persone;
 	//private File file;
 	static String filePathContatti = "src\\contatti\\informazioni2.txt";
+	//static String filePath = "src\\contatti\\"
 	static String filePathUser = "src\\user.txt";
 	static String dirPath = "src\\informazioni";
 	private long time = System.currentTimeMillis();
@@ -70,20 +71,60 @@ public class Database {
 		        System.out.println("Cartella già esistente.");
 		      }
 		      
-		      persone = this.getPersone2(file);
-		      //deletePersona();
-		      //file.list();
+		      //persone = this.getPersone2(file);
 		      
-		 } catch (IOException e) {
+		      persone = initContacts(file.list());
+		      //deletePersona();
+		      //System.out.println("Lista file: " + file.list()[0]);
+		      
+		      
+		 } catch (Exception e) {
 		      System.out.println("Errore.");
 		      e.printStackTrace();
 		 }
 		System.out.println("createFile-> Persone: " + persone.toString() + time);
 	}
-
+	
+	
+	public ArrayList<Persona> initContacts(String[] fileList){
+		ArrayList<Persona> persone = new ArrayList<Persona>();
+		
+		for(int i = 0; i < fileList.length; i++) {
+			
+			System.out.println("File nella lista:" + fileList[i]);
+			
+			try {
+				System.out.println("ENTRO NEL TRY\n");
+				File file = new File(dirPath +"\\"+fileList[i] );
+		        String line;
+				Scanner scnr = new Scanner(file);
+			      
+				//Scanner scnr = new Scanner(fileList[i]);
+			      
+			    if(scnr.hasNextLine()){
+			         line = scnr.nextLine();
+			         System.out.println("Line: " + line);
+			         String[] personaStr = line.split(";");
+			         if(personaStr.length == 5) {
+			        	 Persona persona = new Persona(personaStr[0], personaStr[1], personaStr[2], personaStr[3], Integer.parseInt(personaStr[4]));
+				         persone.add(persona);
+			         }
+			     }
+    
+			}catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+		}
+	    Collections.sort(persone,NameComparator);
+		
+		return persone;
+	}
+	
 	public void addPersonaOnTable(Persona persona) {
 		persone.add(persona);	
-		Collections.sort(persone,AgeComparator);
+		Collections.sort(persone,NameComparator);
 		System.out.println("Aggiunto: " + persona.getName() + persona.getSurname() + persona.getAddress()+ persona.getTelephone()+ persona.getAge() );
 		
 	}
@@ -159,7 +200,7 @@ public class Database {
 			persone.set(index, persona);
 		}
 		
-		Collections.sort(persone,AgeComparator);
+		Collections.sort(persone,NameComparator);
 		
 	}
 	
@@ -219,7 +260,7 @@ public class Database {
 	         persone.add(persona);
 	         //System.out.println(personaStr[0]);
 	     }  
-	    Collections.sort(persone,AgeComparator);
+	    Collections.sort(persone,NameComparator);
 	    return persone;       
 	}
 	
@@ -257,7 +298,7 @@ public class Database {
 		
 	}
 	
-	public static Comparator<Persona> AgeComparator = new Comparator<Persona>() {
+	public static Comparator<Persona> NameComparator = new Comparator<Persona>() {
 
         @Override
         public int compare(Persona e1, Persona e2) {
