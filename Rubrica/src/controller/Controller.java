@@ -4,28 +4,35 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 import model.Database;
+import model.Database2;
 import model.Persona;
 
 public class Controller {
 	
 	Database database = new Database();
-	public void createFile() {
-		database.createFile();
+	//Database2 database = new Database2();
+	
+	public void createFileContatti() {
+		database.createFileContatti();
 		
 	}
+	
+	public void createFileUser() {
+		database.createFileUser();
+		
+	}
+	
+	public void createDir() {
+		database.createDir();
+		
+	}
+	
 	public int addPersona(String name, String surname,String address,String telephone, int age) {
 		Persona persona = new Persona(name, surname, address, telephone, age);
 		int value = database.addPersonaOnFile(persona);
 		return value;
 		
 	}
-	
-	/*public int modifyPersona(String name, String surname,String address,String telephone, int age, String oldTelephone){
-		Persona persona = new Persona(name, surname, address, telephone, age);
-		int value = database.modifyPersonaOnFile( persona, oldTelephone);
-		return value;
-		
-	}*/
 	
 	public int modifyPersona(String name, String surname,String address,String telephone, int age, String oldTelephone){
 		Persona persona = new Persona(name, surname, address, telephone, age);
@@ -38,9 +45,7 @@ public class Controller {
 		database.deletePersonaFromFile(telephone);
 		
 	}
-	
-	
-	
+		
 	public List<Persona> getPersone(){
 		return database.getPersone();
 	}
@@ -55,5 +60,9 @@ public class Controller {
 		infoPersona[4] = Integer.toString(persona.getAge());
 		return infoPersona;
 	}
-
+	
+	public boolean checkUser(String username, String password) {
+		boolean value = database.checkUser(username, password);
+		return value;
+	}
 }

@@ -15,16 +15,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
-public class Database {
+public class Database2 {
 	
 	private ArrayList<Persona> persone;
 	//private File file;
 	static String filePathContatti = "src\\contatti\\informazioni2.txt";
 	static String filePathUser = "src\\user.txt";
-	static String dirPath = "src\\informazioni";
 	private long time = System.currentTimeMillis();
 	
-	public Database() {
+	public Database2() {
 		persone = new ArrayList<Persona>();
 	}
 	
@@ -52,27 +51,6 @@ public class Database {
 		      persone = this.getPersone2(file);
 		      //deletePersona();
 		      
-		      
-		 } catch (IOException e) {
-		      System.out.println("Errore.");
-		      e.printStackTrace();
-		 }
-		System.out.println("createFile-> Persone: " + persone.toString() + time);
-	}
-	
-	public void createDir() {
-		try {
-		      File file = new File(dirPath);
-		      
-		      if (file.mkdir()) {
-		        System.out.println("Cartella creato: " + file.getName());
-		      } else {
-		        System.out.println("Cartella già esistente.");
-		      }
-		      
-		      persone = this.getPersone2(file);
-		      //deletePersona();
-		      //file.list();
 		      
 		 } catch (IOException e) {
 		      System.out.println("Errore.");

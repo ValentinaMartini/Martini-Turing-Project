@@ -178,6 +178,7 @@ public class EditorPersona extends JFrame {
 		}
 		return true;
 	}
+	
 	public void backToFinestraPrincipale() {
 		finestraPrincipale.setVisible(true);
 		setVisible(false);
@@ -198,6 +199,7 @@ public class EditorPersona extends JFrame {
 		buttonSave = new JButton("Salva");
 		buttonCancel = new JButton("Annulla");
 	}
+	
 	public void setInterface() {
 		setLayout(new BorderLayout());
 		panelData = new JPanel();

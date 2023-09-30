@@ -14,6 +14,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import controller.Controller;
+
 public class Login extends JFrame{
 	
 	private JPanel panelData;
@@ -24,12 +26,16 @@ public class Login extends JFrame{
 	private JTextField fieldPassword;
 	private JButton buttonLogin;
 	
+	private Controller controller;
+	
 	public Login() {
 		labelUsername = new JLabel("Nome");
 		fieldUsername = new JTextField(15);
 		labelPassword = new JLabel("Cognome");
 		fieldPassword = new JTextField(15);
 		buttonLogin = new JButton("Login");
+		
+		controller = new Controller();
 		
 		setLayout(new BorderLayout());
 		
@@ -39,9 +45,21 @@ public class Login extends JFrame{
 		panelButton = new JPanel();
 		panelButton.setLayout(new FlowLayout());	
 		
+		controller.createFileUser();
+		
 		buttonLogin.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				String username  = fieldUsername.getText();
+				String password  = fieldPassword.getText();
+				if( !checkEmptyField(username, password) ) {
+					return;
+				}
+				if (!controller.checkUser(username, password)) {
+					JOptionPane.showMessageDialog(null, "Errore: username o password errato");
+					return;
+				}
+				
 				FinestraPrincipale finestraPrincipale = new FinestraPrincipale();
 				finestraPrincipale.setVisible(true);
 				setVisible(false);
@@ -90,5 +108,13 @@ public class Login extends JFrame{
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
+	}
+	
+	public boolean checkEmptyField(String username, String password) {
+		if(!username.isEmpty() && !password.isEmpty()) {
+			return true;
+		}
+		JOptionPane.showMessageDialog(null, "Errore: alcuni campi sono vuoti");
+		return false;
 	}
 }
