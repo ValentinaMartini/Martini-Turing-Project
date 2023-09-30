@@ -8,12 +8,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Database {
 	
@@ -97,6 +98,7 @@ public class Database {
 				         persone.add(persona);
 			         }
 			     }
+			    scnr.close();
     
 			}catch (Exception e1) {
 				// TODO Auto-generated catch block
@@ -130,7 +132,10 @@ public class Database {
 			PrintStream stream = new PrintStream(new FileOutputStream(filePath, true)); 
 			stream.append(str);
 			
+			stream.close();
 			addPersonaOnTable(persona);
+			
+			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -195,33 +200,23 @@ public class Database {
 	}
 	
 	public void deletePersonaFromFile(String telephone) {
-		System.out.println("deletePersonaFromFile -> Persone: " + persone.toString() + time);
-		try {
-			File file = new File(filePathContatti);
-			StringBuffer inputBuffer = new StringBuffer();
-	        String line;
-			Scanner scnr = new Scanner(file);
-		      
-		    while(scnr.hasNextLine()){
-		         line = scnr.nextLine();
-		         
-		         String[] personaStr = line.split(";");
-		         if(!personaStr[3].equals(telephone)) {
-		        	 inputBuffer.append(line);
-			         inputBuffer.append('\n');
-		         }
-		    } 
-		   
-		    
-		    PrintStream stream = new PrintStream(file);
-		    stream.print(inputBuffer.toString());
-		    
-		    deletePersonaFromTable(telephone);
-		    
-		}catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+
+		File file = new File(dirPath+delimiter+telephone+".txt");
+		System.out.println( "file: " +dirPath+delimiter+telephone+".txt");  
+		if(file.exists()) {
+			
+			if (file.delete())  {  
+				
+				System.out.println(file.getName() +  " cancellato" );   //recupera e stampa il nome del file  
+			}  
+			else{  
+				System.out.println( "fallito" );  
+			}  
 		}
+		else {
+			System.out.println("Errore: file non trovato");
+		}
+		deletePersonaFromTable(telephone);
 	}
 	
 	public void deletePersonaFromTable(String telephone) {
