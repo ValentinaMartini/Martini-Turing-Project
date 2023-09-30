@@ -18,11 +18,10 @@ import java.util.Scanner;
 public class Database {
 	
 	private ArrayList<Persona> persone;
-	//private File file;
 	static String filePathContatti = "src\\contatti\\informazioni2.txt";
-	//static String filePath = "src\\contatti\\"
 	static String filePathUser = "src\\user.txt";
 	static String dirPath = "src\\informazioni";
+	static String delimiter = "\\";
 	private long time = System.currentTimeMillis();
 	
 	public Database() {
@@ -50,10 +49,6 @@ public class Database {
 		        System.out.println("File già esistente.");
 		      }
 		      
-		      persone = this.getPersone2(file);
-		      //deletePersona();
-		      
-		      
 		 } catch (IOException e) {
 		      System.out.println("Errore.");
 		      e.printStackTrace();
@@ -71,20 +66,14 @@ public class Database {
 		        System.out.println("Cartella già esistente.");
 		      }
 		      
-		      //persone = this.getPersone2(file);
-		      
 		      persone = initContacts(file.list());
-		      //deletePersona();
-		      //System.out.println("Lista file: " + file.list()[0]);
-		      
-		      
+      
 		 } catch (Exception e) {
 		      System.out.println("Errore.");
 		      e.printStackTrace();
 		 }
 		System.out.println("createFile-> Persone: " + persone.toString() + time);
 	}
-	
 	
 	public ArrayList<Persona> initContacts(String[] fileList){
 		ArrayList<Persona> persone = new ArrayList<Persona>();
@@ -98,9 +87,7 @@ public class Database {
 				File file = new File(dirPath +"\\"+fileList[i] );
 		        String line;
 				Scanner scnr = new Scanner(file);
-			      
-				//Scanner scnr = new Scanner(fileList[i]);
-			      
+			
 			    if(scnr.hasNextLine()){
 			         line = scnr.nextLine();
 			         System.out.println("Line: " + line);
@@ -131,13 +118,16 @@ public class Database {
 	
 	public int addPersonaOnFile(Persona persona) {
 		try {
-			//file = new File(filPath);
 			Boolean value = checkUniqueNumber(persona.getTelephone());
 			if(value == false) {
 				return -1;
 			}
 			String str = persona.getName()+";"+persona.getSurname()+";"+persona.getAddress()+";"+persona.getTelephone()+";"+persona.getAge()+"\n";
-			PrintStream stream = new PrintStream(new FileOutputStream(filePathContatti, true)); 
+			String filePath = dirPath+delimiter+persona.getTelephone()+".txt";
+			
+			createFile(filePath);
+			
+			PrintStream stream = new PrintStream(new FileOutputStream(filePath, true)); 
 			stream.append(str);
 			
 			addPersonaOnTable(persona);
