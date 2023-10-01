@@ -26,10 +26,13 @@ public class TablePanel extends JPanel{
 		
 		tableModel = new TableModel();
 		table = new JTable(tableModel);
+		JTableHeader header = table.getTableHeader();
+	    header.setBackground(new Color(165, 105, 189));
+	    header.setForeground(Color.black);
 		
 		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
 		if (defaults.get("Table.alternateRowColor") == null)
-		    defaults.put("Table.alternateRowColor", new Color(255, 228, 225));
+		    defaults.put("Table.alternateRowColor", new Color(232, 218, 239));
 		//table.setAutoCreateRowSorter(true);
 		this.controller = controller;
 		
@@ -45,32 +48,28 @@ public class TablePanel extends JPanel{
 		tableModel.fireTableDataChanged();
 	}
 	
-	
-	
-	public void deletePersona() {
+	public int deletePersona() {
 		// check for selected row first
 		int row = table.getSelectedRow();
+		int result = -1;
 	    if(row != -1) { 
 	    	
 	    	String name = table.getValueAt(row, 0).toString();
 	    	String surname = table.getValueAt(row, 1).toString();
 	    	String telephone = table.getValueAt(row, 2).toString();
 	    	
-	    	int result = JOptionPane.showConfirmDialog(null, "Eliminare la persona " + name + " "+ surname + "?" );
+	    	result = JOptionPane.showConfirmDialog(null, "Eliminare il contatto " + name + " "+ surname + "?", "Delete Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
 	    	
 	    	if(result == 0) {
 	    		controller.deletePersona(telephone);
 		    	JOptionPane.showMessageDialog(null, "Contatto eliminato con successo");
-	    	}
-	    
-	    	System.out.println(result);
-	    	
-	    	//controller.deletePersona(value);
-	    	//JOptionPane.showMessageDialog(null, "Selected row deleted successfully");
+	    	}   	
 	    }
 	    else {
 	    	JOptionPane.showMessageDialog(null, "Errore: selezionare prima il contatto da eliminare");
 	    }
+	    
+	    return result;
 	}
 	
 	public String[] getInfoPersona() {

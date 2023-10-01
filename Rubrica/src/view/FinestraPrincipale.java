@@ -1,97 +1,139 @@
 package view;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Image;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.io.File;
+import java.io.IOException;
 import controller.Controller;
 
+public class FinestraPrincipale extends JFrame {
 
-
-public class FinestraPrincipale extends JFrame{
-	
 	private TablePanel tablePanel;
 	private Controller controller;
 	private JButton buttonNew;
 	private JButton buttonModify;
 	private JButton buttonDelete;
 	private FinestraPrincipale finestraPrincipale;
-	private JPanel panel;
+	JToolBar toolbar;
 
-	
 	public FinestraPrincipale() {
-		
+
 		super("Rubrica");
-		
 		setLayout(new BorderLayout());
 		
 		controller = new Controller();
-		tablePanel = new TablePanel(controller);
-		buttonNew = new JButton("Nuovo");
-		buttonModify = new JButton("Modifica");
-		buttonDelete = new JButton("Elimina");
-		panel = new JPanel();
-		panel.setLayout(new FlowLayout());
-		
-		panel.add(buttonNew);
-		panel.add(buttonModify);
-		panel.add(buttonDelete);
-		
-		controller.createDir();
-		
-		finestraPrincipale = this;
-		
-		buttonNew.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				EditorPersona editorPersona = new EditorPersona(finestraPrincipale, controller);
-				editorPersona.setVisible(true);
-				setVisible(false);
-				//controller.addPersona("Giovanni", "rossi", "via delle pere", "3392162800",34 );
-				//tablePanel.updating();
-			}
-		});
-		
-		buttonModify.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//Persona persona = tablePanel.getInfoPersona();
-				String[] infoPersona = tablePanel.getInfoPersona();
-				if(infoPersona != null) {
-					EditorPersona editorPersona = new EditorPersona(finestraPrincipale, controller, infoPersona);
+
+		try {
+			
+			//setto le icone dei pulsanti aggiunti/modifica/elimina
+			ImageIcon iconAdd = createIcon("addIcon.png"); 			
+			ImageIcon iconModify = createIcon("modifyIcon.png"); 
+			ImageIcon iconDelete = createIcon("deleteIcon.png"); 
+
+			tablePanel = new TablePanel(controller);
+			
+			buttonNew = new JButton(iconAdd);
+			buttonNew.setToolTipText("Aggiungi");
+			buttonNew.setBackground(new Color(130, 224, 170));
+			buttonNew.setOpaque(true);
+
+			buttonModify = new JButton(iconModify);
+			buttonModify.setToolTipText("Modifica");
+			buttonModify.setBackground(new Color(247, 220, 111));
+			buttonModify.setOpaque(true);
+
+			buttonDelete = new JButton(iconDelete);
+			buttonDelete.setToolTipText("Elimina");
+			buttonDelete.setBackground(new Color(241, 148, 138));
+			buttonDelete.setOpaque(true);
+
+			toolbar = new JToolBar();
+
+			toolbar.add(buttonNew);
+
+			toolbar.add(buttonModify);
+
+			toolbar.add(buttonDelete);
+			toolbar.setFloatable(false);
+			toolbar.setRollover(true);
+
+			toolbar.setLayout(new FlowLayout(FlowLayout.CENTER));
+			
+			
+			controller.createDir();	//creo la cartella informazioni che contiene i file per i sincoli contatti
+
+			finestraPrincipale = this;
+			
+			//Gestione pulsante Aggiunti: se si clicca il pulsante, viene mostrata la finestra editor persona in cui poter aggiungere un nuovo contatto
+			buttonNew.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					
+					
+					EditorPersona editorPersona = new EditorPersona(finestraPrincipale, controller);
 					editorPersona.setVisible(true);
 					setVisible(false);
+					
 				}
-			}
-		});
-		
-		buttonDelete.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-					tablePanel.deletePersona();
-					tablePanel.updating();    
-			}
-		});
-		
-		tablePanel.setData(controller.getPersone());
-		
-		add(tablePanel, BorderLayout.CENTER);
-		add(panel, BorderLayout.PAGE_END);
-		
-		
-		
-		setSize(800,500);	
-		setLocationRelativeTo(null);
-		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setVisible(true);
+			});
+			
+			//Gestione pulsante modifica: se si clicca il pulsante, dopo aver selezionato un cotatto, viene mostrata la finestra editor-persona in cui poter modificare un contatto già esistente		
+			buttonModify.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					
+					String[] infoPersona = tablePanel.getInfoPersona(); //prendo le informazioni del contatto selezionato per inizializzare la finestra editor-persona
+					if (infoPersona != null) {
+						EditorPersona editorPersona = new EditorPersona(finestraPrincipale, controller, infoPersona);
+						editorPersona.setVisible(true);
+						setVisible(false);
+					}
+				}
+			});
+			
+			//Gestione pulsante elimina: se si clicca il pulsante, dopo aver selezionato un cotatto verrà mostrato un msg di conferma
+			//in caso di conferma positiva si elimina il contatto, altrimenti non si fa nulla
+			buttonDelete.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if( tablePanel.deletePersona() ==0) {
+						tablePanel.updating();	//aggiorno la tabella dopo l'eliminazione del contatto
+					}
+				}
+			});
+			
+			//setto la tabella dei contatti con i contatti già esistente in rubrica
+			tablePanel.setData(controller.getPersone());
+
+			add(tablePanel, BorderLayout.CENTER);
+			// add(panel, BorderLayout.PAGE_END);
+			add(toolbar, BorderLayout.PAGE_END);
+
+			setSize(600, 400);
+			setLocationRelativeTo(null);
+			setResizable(false);
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			setVisible(true);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
-	
+
 	public void refreshTable() {
-		tablePanel.updating();    
+		tablePanel.updating();
+	}
+
+	private ImageIcon createIcon(String iconName) throws IOException {
+		Image img = ImageIO.read(new File(controller.getIconPath(iconName)));
+		Image addImg = img.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+		return new ImageIcon(addImg);
 	}
 
 }

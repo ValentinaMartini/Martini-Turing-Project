@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 import model.Database;
-import model.Database2;
 import model.Persona;
 
 public class Controller {
@@ -25,6 +24,10 @@ public class Controller {
 	public void createDir() {
 		database.createDir();
 		
+	}
+	
+	public String getIconPath(String iconName) {
+		return database.getIconPath(iconName);
 	}
 	
 	public int addPersona(String name, String surname,String address,String telephone, int age) {
