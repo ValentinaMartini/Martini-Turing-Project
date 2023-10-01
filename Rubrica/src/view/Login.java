@@ -54,6 +54,7 @@ public class Login extends JFrame{
 		
 		controller.createFileUser();
 		
+		//gestione pulsante login
 		buttonLogin.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -124,6 +125,7 @@ public class Login extends JFrame{
 		panelData.add(fieldPassword, gbc);
 	}
 	
+	//controllo che i campi non siano vuoti
 	public boolean checkEmptyField(String username, String password) {
 		if(!username.isEmpty() && !password.isEmpty()) {
 			return true;

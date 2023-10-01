@@ -314,7 +314,7 @@ public class Database {
 			}  
 			return hashtext;  
 		}  
-		//for specifying wrong message digest algorithms  
+		
 		catch (NoSuchAlgorithmException e)   {  
 			throw new RuntimeException(e);  
 		}  

@@ -76,7 +76,6 @@ public class FinestraPrincipale extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					
-					
 					EditorPersona editorPersona = new EditorPersona(finestraPrincipale, controller);
 					editorPersona.setVisible(true);
 					setVisible(false);
@@ -120,6 +119,7 @@ public class FinestraPrincipale extends JFrame {
 			setResizable(false);
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setVisible(true);
+		
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
