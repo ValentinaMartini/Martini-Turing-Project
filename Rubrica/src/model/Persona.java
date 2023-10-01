@@ -3,8 +3,6 @@ package model;
 
 
 public class Persona {
-		//private static int counter =0;
-		//private int id;
 		private String name;
 		private String surname;
 		private String address;
@@ -12,22 +10,14 @@ public class Persona {
 		private int age;
 		
 		public Persona(String name, String surname,String address,String telephone, int age) {
-			//this.id = counter;
 			this.name = name;
 			this.surname = surname;
 			this.address = address;
 			this.telephone = telephone;
 			this.age = age;
-			//counter++;
 			
 		}
 		
-		/*public int getId() {
-			return id;
-		}
-		public void setId(int id) {
-			this.id = id;
-		}*/
 		public String getName() {
 			return name;
 		}

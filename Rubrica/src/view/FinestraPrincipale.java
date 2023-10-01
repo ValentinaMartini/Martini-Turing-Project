@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+
 import controller.Controller;
 
 public class FinestraPrincipale extends JFrame {
@@ -102,7 +103,7 @@ public class FinestraPrincipale extends JFrame {
 			buttonDelete.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if( tablePanel.deletePersona() ==0) {
+					if( tablePanel.deletePersona() == 0) {
 						tablePanel.updating();	//aggiorno la tabella dopo l'eliminazione del contatto
 					}
 				}
@@ -112,7 +113,6 @@ public class FinestraPrincipale extends JFrame {
 			tablePanel.setData(controller.getPersone());
 
 			add(tablePanel, BorderLayout.CENTER);
-			// add(panel, BorderLayout.PAGE_END);
 			add(toolbar, BorderLayout.PAGE_END);
 
 			setSize(600, 400);
@@ -125,11 +125,13 @@ public class FinestraPrincipale extends JFrame {
 			e1.printStackTrace();
 		}
 	}
-
+	
+	//metodo per aggiornare i dati nella tabella
 	public void refreshTable() {
 		tablePanel.updating();
 	}
-
+	
+	//metodo per settare le icone da inserire nei pulsanti aggiungi/modifica/elimina
 	private ImageIcon createIcon(String iconName) throws IOException {
 		Image img = ImageIO.read(new File(controller.getIconPath(iconName)));
 		Image addImg = img.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);

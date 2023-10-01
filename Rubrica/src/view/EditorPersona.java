@@ -2,15 +2,17 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,7 +22,6 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
 import controller.Controller;
-import javax.swing.border.Border;
 
 
 public class EditorPersona extends JFrame {
@@ -39,46 +40,48 @@ public class EditorPersona extends JFrame {
 	private JButton buttonSave;
 	private FinestraPrincipale finestraPrincipale;
 	private JPanel panelData;
-	//private JPanel panelButton;
+	private Controller controller;
 	JToolBar toolbar;
 	
+	//costruttore che viene chiamato quando si clicca su modifica contatto dalla finestra principale
 	public EditorPersona(FinestraPrincipale finestraPrincipale, Controller controller, String[] infoPersona) {
 		
+		this.controller = controller;
 		setAttributes();
 		
 		this.finestraPrincipale = finestraPrincipale;
-		
+
 		String oldTelephone = infoPersona[3];
 		
+		//valorizzo i textField con i dati del contatto che è stato selezionato per la modifica
 		fieldName.setText(infoPersona[0]);
-		
 		fieldSurname.setText(infoPersona[1]);
 		fieldAddress.setText(infoPersona[2]);
 		fieldTelephone.setText(infoPersona[3]);
 		fieldAge.setText(infoPersona[4]);
 		
+		//gestione del pulsante salva: se tutto va a buon fine, aggiorna il file specifico del contatto modificato, aggiorna la tabella contatti, torna alla finestra principale
 		buttonSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				String name = capitalizeFirstLetter(fieldName.getText());
-				String surname = capitalizeFirstLetter(fieldSurname.getText());
+				String name = capitalizeFirstLetter(fieldName.getText());//prendo il nome con la lettera maiuscola
+				String surname = capitalizeFirstLetter(fieldSurname.getText());//prendo il cognome con la lettera maiuscola
 				String address = fieldAddress.getText();
 				String telephone = fieldTelephone.getText();
 				String ageStr = fieldAge.getText();
 				
-				if(!checkTelephone(telephone)) {
+				if(!checkTelephone(telephone)) { //controllo che il numero di telefono sia costituito solo da numeri
 					return;
 				}
 				
-				//String ageStr = fieldAge.getText();
-				if( !checkEmptyField(name, surname, address, telephone, ageStr) ) {
+				if( !checkEmptyField(name, surname, address, telephone, ageStr) ) {//controllo che non siano stati lasciati campi vuoti
 					return;
 				}
 				
 				int age;
 				try {
-					age = Integer.parseInt(fieldAge.getText());
+					age = Integer.parseInt(fieldAge.getText());	//controllo che l'età sia costituito solo da numeri
 				} catch(Exception e1) {
 					JOptionPane.showMessageDialog(null, "Errore: l'eta deve essere un valore numerico");
 					return;
@@ -86,9 +89,9 @@ public class EditorPersona extends JFrame {
 				
 				
 				
-				int value = controller.modifyPersona(name, surname, address, telephone, age, oldTelephone);
+				int value = controller.modifyPersona(name, surname, address, telephone, age, oldTelephone); //aggiorna il file specifico del contatto modificato, aggiorna la tabella contatti 
 				if(value == -1) {
-					JOptionPane.showMessageDialog(null, "Errore: il numero inserito è già esistente");
+					JOptionPane.showMessageDialog(null, "Errore: il numero inserito è già esistente"); 
 					return;
 				}
 				
@@ -98,6 +101,7 @@ public class EditorPersona extends JFrame {
 			}
 		});
 		
+		//gestione del pulsante annulla: torna alla finestra principale senza modificare nulla
 		buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -109,38 +113,42 @@ public class EditorPersona extends JFrame {
 		
 	}
 	
+	//costruttore che viene chiamato quando si clicca su aggiungi contatto dalla finestra principale
 	public EditorPersona(FinestraPrincipale finestraPrincipale, Controller controller) {
 		
+		this.controller = controller;
 		setAttributes();
 		
 		this.finestraPrincipale = finestraPrincipale;
 		
+		//gestione del pulsante salva: se tutto va a buon fine, aggiunge il file specifico del contatto inserito, aggiorna la tabella contatti, torna alla finestra principale
 		buttonSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				String name = capitalizeFirstLetter(fieldName.getText());
-				String surname = capitalizeFirstLetter(fieldSurname.getText());
+				String name = capitalizeFirstLetter(fieldName.getText()); //prendo il nome con la lettera maiuscola
+				String surname = capitalizeFirstLetter(fieldSurname.getText());//prendo il cognome con la lettera maiuscola
 				String address = fieldAddress.getText();
 				String telephone = fieldTelephone.getText(); 
 				String ageStr = fieldAge.getText();
 				
-				if(!checkTelephone(telephone)) {
+				if(!checkTelephone(telephone)) {//controllo che il numero di telefono sia costituito solo da numeri
 					return;
 				}
 		
-				if( !checkEmptyField(name, surname, address, telephone, ageStr) ) {
+				if( !checkEmptyField(name, surname, address, telephone, ageStr) ) {//controllo che non siano stati lasciati campi vuoti
 					return;
 				}
 				
 				int age;
 				try {
-					age = Integer.parseInt(fieldAge.getText());
+					age = Integer.parseInt(fieldAge.getText()); //controllo che l'età sia costituito solo da numeri
 				} catch(Exception e1) {
 					JOptionPane.showMessageDialog(null, "Errore: l'eta deve essere un valore numerico");
 					return;
 				}
-				int value = controller.addPersona(name, surname, address, telephone,age );
+				
+				int value = controller.addPersona(name, surname, address, telephone,age ); //aggiunge il file specifico del contatto modificato, aggiorna la tabella contatti 
 				if(value == -1) {
 					JOptionPane.showMessageDialog(null, "Errore: il numero inserito è già esistente");
 					return;
@@ -151,6 +159,7 @@ public class EditorPersona extends JFrame {
 			}
 		});
 		
+		//gestione del pulsante annulla: torna alla finestra principale senza salvare nulla
 		buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -162,6 +171,7 @@ public class EditorPersona extends JFrame {
 		
 	}
 	
+	//controlla che i campi non siano vuoti
 	public boolean checkEmptyField(String name, String surname, String address, String telephone, String ageStr) {
 		if(!name.isEmpty() && !surname.isEmpty() && !address.isEmpty() && !telephone.isEmpty() && !ageStr.isEmpty()) {
 			return true;
@@ -170,6 +180,7 @@ public class EditorPersona extends JFrame {
 		return false;
 	}
 	
+	//controlla che il numero di telefono sia un valore numerico e che sia minore si 12 caratteri
 	public boolean checkTelephone(String telephone) {
 		for(int i =0; i < telephone.length(); i++) {
 			if ( !Character.isDigit(telephone.charAt(i)) ) {
@@ -185,10 +196,12 @@ public class EditorPersona extends JFrame {
 		return true;
 	}
 	
+	//metodo che torna alla finestra principale
 	public void backToFinestraPrincipale() {
 		finestraPrincipale.setVisible(true);
 		setVisible(false);
 	}
+	
 	
 	public void setAttributes() {
 		
@@ -212,18 +225,34 @@ public class EditorPersona extends JFrame {
 		labelAge.setPreferredSize(new Dimension(80,30));
 		fieldAge = new JTextField(15);
 		
-		buttonSave = new JButton("Salva");
-		buttonSave.setBackground(new Color(130, 224, 170));
-		buttonSave.setOpaque(true);
+		try {
+			ImageIcon iconSave = createIcon("saveIcon.png");
+			buttonSave = new JButton(iconSave);
+			buttonSave.setToolTipText("Salva");
+			buttonSave.setBackground(new Color(130, 224, 170));
+			buttonSave.setOpaque(true);
+			
+			ImageIcon iconCancel = createIcon("cancelIcon.png");
+			buttonCancel = new JButton(iconCancel);
+			buttonCancel.setToolTipText("Annulla");
+			buttonCancel.setBackground(new Color(241, 148, 138 ));
+			buttonCancel.setOpaque(true);
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		} 	
 		
-		buttonCancel = new JButton("Annulla");
-		buttonCancel.setBackground(new Color(241, 148, 138 ));
-		buttonCancel.setOpaque(true);
 		
 		toolbar = new JToolBar();
 		
-		buttonSave.setPreferredSize(new Dimension(100, 40));
-		buttonCancel.setPreferredSize(new Dimension(100, 40));
+		buttonSave.setPreferredSize(new Dimension(50, 50));
+		buttonCancel.setPreferredSize(new Dimension(50, 50));
+	}
+	
+	private ImageIcon createIcon(String iconName) throws IOException {
+		Image img = ImageIO.read(new File(controller.getIconPath(iconName)));
+		Image saveImg = img.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+		return new ImageIcon(saveImg);
 	}
 	
 	public void setInterface() {
@@ -328,6 +357,7 @@ public class EditorPersona extends JFrame {
 	}
 	
 
+	//metodo per salvare una stringa con la prima lettera maiuscola
 	private String capitalizeFirstLetter(String str) {
 		if(str.length() == 0) {
 			return "";

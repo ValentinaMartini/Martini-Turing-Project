@@ -31,11 +31,11 @@ public class Login extends JFrame{
 	
 	public Login() {
 		
-		labelUsername = new JLabel("Nome");
+		labelUsername = new JLabel("Username");
 		labelUsername.setPreferredSize(new Dimension(80,30));
 		fieldUsername = new JTextField(15);
 		
-		labelPassword = new JLabel("Cognome");
+		labelPassword = new JLabel("Password");
 		labelPassword.setPreferredSize(new Dimension(80,30));
 		fieldPassword = new JTextField(15);
 		
@@ -86,7 +86,7 @@ public class Login extends JFrame{
 		
 		add(panelData, BorderLayout.CENTER);
 		add(panelButton, BorderLayout.PAGE_END);
-		setSize(600,400);	
+		setSize(400,200);	
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

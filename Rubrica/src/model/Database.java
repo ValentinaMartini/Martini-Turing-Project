@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,12 +24,11 @@ public class Database {
 	static String dirIconPath = dirResourcePath + delimiter + "icon";
 	
 
-	private long time = System.currentTimeMillis();
-
 	public Database() {
 		persone = new ArrayList<Persona>();
 	}
 
+	//metodo che ritorna la lista di contatti da mostrare all'interno della rubrica
 	public List<Persona> getPersone() {
 		return persone;
 	}
@@ -35,10 +37,12 @@ public class Database {
 		return dirIconPath + delimiter + iconName;
 	}
 
+	//metodo per creare il file in cui sono presente i dati degli utenti
 	public void createFileUser() {
 		createFile(filePathUser);
 	}
 
+	//metodo per creare i file
 	private void createFile(String filePath) {
 		try {
 			File file = new File(filePath);
@@ -53,29 +57,9 @@ public class Database {
 			System.out.println("Errore.");
 			e.printStackTrace();
 		}
-		System.out.println("createFile-> Persone: " + persone.toString() + time);
 	}
 	
-	public void createResourceDir() {
-		try {
-			File file = new File(dirResourcePath);
-
-			if (file.mkdir()) {
-				System.out.println("Cartella creato: " + file.getName());
-			} else {
-				System.out.println("Cartella già esistente.");
-			}
-
-			persone = initContacts(file.list());
-
-		} catch (Exception e) {
-			System.out.println("createDir() --> Exception: ");
-			e.printStackTrace();
-		}
-		System.out.println("createFile-> Persone: " + persone.toString() + time);
-	}
-
-
+	//metodo per creare la cartella informazioni
 	public void createDir() {
 		try {
 			File file = new File(dirPath);
@@ -83,7 +67,7 @@ public class Database {
 			if (file.mkdir()) {
 				System.out.println("Cartella creato: " + file.getName());
 			} else {
-				System.out.println("Cartella già esistente.");
+				System.out.println("Cartella Informazioni già esistente.");
 			}
 
 			persone = initContacts(file.list());
@@ -92,25 +76,22 @@ public class Database {
 			System.out.println("createDir() --> Exception: ");
 			e.printStackTrace();
 		}
-		System.out.println("createFile-> Persone: " + persone.toString() + time);
-	}
 
+	}
+	
+	//metodo per popolare la lista di contatti
 	public ArrayList<Persona> initContacts(String[] fileList) {
 		ArrayList<Persona> persone = new ArrayList<Persona>();
 
 		for (int i = 0; i < fileList.length; i++) {
 
-			System.out.println("File nella lista:" + fileList[i]);
-
 			try {
-				System.out.println("ENTRO NEL TRY\n");
 				File file = new File(dirPath + "\\" + fileList[i]);
 				String line;
 				Scanner scnr = new Scanner(file);
 
 				if (scnr.hasNextLine()) {
 					line = scnr.nextLine();
-					System.out.println("Line: " + line);
 					String[] personaStr = line.split(";");
 					if (personaStr.length == 5) {
 						Persona persona = new Persona(personaStr[0], personaStr[1], personaStr[2], personaStr[3],
@@ -131,17 +112,11 @@ public class Database {
 		return persone;
 	}
 
-	public void addPersonaOnTable(Persona persona) {
-		persone.add(persona);
-		Collections.sort(persone, NameComparator);
-		System.out.println("Aggiunto: " + persona.getName() + persona.getSurname() + persona.getAddress()
-				+ persona.getTelephone() + persona.getAge());
-
-	}
-
-	public int addPersonaOnFile(Persona persona) {
+	 
+	//metodo che gestisce l'aggiunta di un nuovo contatto nella cartella informazioni. Viene creato un file per ogni contatto. Il nome del file sarà equivalente al numero di telefono
+	public int addFilePerson(Persona persona) {
 		try {
-			Boolean value = checkUniqueNumber(persona.getTelephone());
+			Boolean value = checkUniqueNumber(persona.getTelephone()); //controllo che il numero del nuovo contatto da aggiungere non sia già presente in rubrica
 			if (value == false) {
 				return -1;
 			}
@@ -165,29 +140,37 @@ public class Database {
 
 	}
 
-	public int modifyPersonaOnFile(Persona persona, String oldTelephone) {
+	//metodo che gestisce l'aggiunta di un nuovo contatto nella tabella
+	public void addPersonaOnTable(Persona persona) {
+		persone.add(persona);
+		Collections.sort(persone, NameComparator);
+		System.out.println("Aggiunto: " + persona.getName() + persona.getSurname() + persona.getAddress()
+				+ persona.getTelephone() + persona.getAge());
+
+	}
+
+	//metodo che gestisce la modifica di un contatto
+	public int modifyFilePerson(Persona persona, String oldTelephone) {
 		try {
 			File file;
 			if (!oldTelephone.equals(persona.getTelephone())) {
-				Boolean value = checkUniqueNumber(persona.getTelephone());
+				Boolean value = checkUniqueNumber(persona.getTelephone()); //se è stato modificato il numero del contatto selezionato, controllo che il nuovo numero non sia già esistente in rubrica
 				if (value == false) {
 					return -1;
 				}
 
 				file = new File(dirPath + delimiter + oldTelephone + ".txt");
 				File newFile = new File(dirPath + delimiter + persona.getTelephone() + ".txt");
-				if (file.renameTo(newFile)) {
-					System.out.println("File rinominato correttamente");
+				if (file.renameTo(newFile)) {	//visto che è stato modificato il numero di telefono, allora rinomino anche il file specifico per quel contatto
+					System.out.println("Modifica contatto: File rinominato correttamente");
 				} else {
-					System.out.println("Errore rinominazione file");
+					System.out.println("Modifica contatto: Errore rinominazione file");
 				}
 
 			} else {
 				file = new File(dirPath + delimiter + oldTelephone + ".txt");
 			}
 
-			// String line;
-			// StringBuffer inputBuffer = new StringBuffer();
 			String str = persona.getName() + ";" + persona.getSurname() + ";" + persona.getAddress() + ";"
 					+ persona.getTelephone() + ";" + persona.getAge();
 
@@ -196,13 +179,17 @@ public class Database {
 			fileOut.close();
 
 			modifyPersonaOnTable(persona, oldTelephone);
+			System.out.println("Contatto modificato correttamente");
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
+			System.out.println("Errore modifica contatto");
 			e1.printStackTrace();
 		}
+		
 		return 1;
 	}
 
+	//metodo che gestisce la modifica di un contatto nella tabella
 	public void modifyPersonaOnTable(Persona persona, String oldTelephone) {
 		int index = getPersonaIndex(oldTelephone);
 		if (index != -1) {
@@ -213,10 +200,10 @@ public class Database {
 
 	}
 
-	public void deletePersonaFromFile(String telephone) {
+	//metodo che gestisce l'eliminazione di un contatto nella cartella informazioni
+	public void deleteFilePerson(String telephone) {
 
 		File file = new File(dirPath + delimiter + telephone + ".txt");
-		System.out.println("file: " + dirPath + delimiter + telephone + ".txt");
 		if (file.exists()) {
 
 			if (file.delete()) {
@@ -231,8 +218,8 @@ public class Database {
 		deletePersonaFromTable(telephone);
 	}
 
+	//metodo che gestisce l'eliminazione di un contatto dalla tabella
 	public void deletePersonaFromTable(String telephone) {
-		// System.out.println("TELEFONO DELLA PERSONA DA ELIMINARE: " + telephone);
 
 		int index = getPersonaIndex(telephone);
 		if (index != -1) {
@@ -241,28 +228,7 @@ public class Database {
 
 	}
 
-	public ArrayList<Persona> getPersone2(File file) throws FileNotFoundException {
-		ArrayList<Persona> persone = new ArrayList<Persona>();
-
-		Scanner scnr = new Scanner(file);
-
-		while (scnr.hasNextLine()) {
-			String line = scnr.nextLine();
-			System.out.println("Line: " + line);
-			String[] personaStr = line.split(";");
-			if (personaStr.length != 5) {
-				continue;
-			}
-			Persona persona = new Persona(personaStr[0], personaStr[1], personaStr[2], personaStr[3],
-					Integer.parseInt(personaStr[4]));
-			persone.add(persona);
-			// System.out.println(personaStr[0]);
-		}
-		Collections.sort(persone, NameComparator);
-		scnr.close();
-		return persone;
-	}
-
+	//ritorna l'indice del contatto nella lista di persone a cui corrisponde il numero di telefono passato in input
 	public int getPersonaIndex(String telephone) {
 		for (int i = 0; i < persone.size(); i++) {
 
@@ -274,10 +240,10 @@ public class Database {
 		return -1;
 	}
 
+	//metodo per prendere le informazioni del contatto a cui corrisponde il numero di telefono passato in input
 	public Persona getInfoPersona(String telephone) {
 		for (int i = 0; i < persone.size(); i++) {
 			String tel = persone.get(i).getTelephone();
-			System.out.println("tel: " + tel);
 			if (tel.equals(telephone)) {
 				return persone.get(i);
 			}
@@ -285,6 +251,7 @@ public class Database {
 		return null;
 	}
 
+	//metodo per controllare che il numero di telefono sia univoco
 	public Boolean checkUniqueNumber(String telephone) {
 		for (int i = 0; i < persone.size(); i++) {
 			String tel = persone.get(i).getTelephone();
@@ -294,9 +261,9 @@ public class Database {
 			}
 		}
 		return true;
-
 	}
 
+	//metodo per creazione del comparator per ordinare in ordine alfabetico i contatti nella tabella
 	public static Comparator<Persona> NameComparator = new Comparator<Persona>() {
 
 		@Override
@@ -308,25 +275,24 @@ public class Database {
 			return (int) (e1.getSurname().compareTo(e2.getSurname()));
 		}
 	};
-
+	
+	//metodo per controllare che le credenziali del login siano corrette
 	public boolean checkUser(String username, String password) {
 
 		try {
 			File file = new File(filePathUser);
-			// StringBuffer inputBuffer = new StringBuffer();
 			String line;
 			Scanner scnr = new Scanner(file);
 
 			while (scnr.hasNextLine()) {
 				line = scnr.nextLine();
-
 				String[] personaStr = line.split(";");
-				if (personaStr[0].equals(username) && personaStr[1].equals(password)) {
+				String encryptPassword = getMd5Hash(password);
+				if (personaStr[0].equals(username) && personaStr[1].equals(encryptPassword)) {
 					return true;
 				}
 			}
 			scnr.close();
-			// return false;
 
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
@@ -335,4 +301,22 @@ public class Database {
 
 		return false;
 	}
+	
+	//metodo per criptare la password dell'utente
+	public static String getMd5Hash(String input)  {  
+		try   {  
+			MessageDigest md = MessageDigest.getInstance("MD5");  
+			byte[] messageDigest = md.digest(input.getBytes());  
+			BigInteger no = new BigInteger(1, messageDigest);  
+			String hashtext = no.toString(16);  
+			while (hashtext.length() < 32)   {  
+				hashtext = "0" + hashtext;  
+			}  
+			return hashtext;  
+		}  
+		//for specifying wrong message digest algorithms  
+		catch (NoSuchAlgorithmException e)   {  
+			throw new RuntimeException(e);  
+		}  
+	}  
 }
