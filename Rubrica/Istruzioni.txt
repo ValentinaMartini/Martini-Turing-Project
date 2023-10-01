@@ -1,0 +1,9 @@
+Per lanciare l'applicazione provare con doppio click.
+Se non funziona, provare ad aprire la PowerShell all'interno della cartella (ctrl+shit+tasto destro) ed eseguire il comando: java -jar Rubrica.jar
+
+credenziali per il login:
+username: 	Valentina99
+password:	password1
+oppure
+username: 	Monymony68
+password:	password2
